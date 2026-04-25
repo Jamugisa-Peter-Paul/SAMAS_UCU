@@ -1,0 +1,67 @@
+QUESTION: CASE STUDY
+You have been contracted by the Uganda Christian University (UCU) to design and develop a Smart Academic Management and Analytics System (SAMAS). The system aims to support the univeristy in managing student records, course delivery, assessments, and performance analytics in a centralized platform.
+The proposed system must allow lecturers to create and manage courses, upload learning materials, design assessments, and track student progress. Students should be able to register for courses, submit assignments, take quizzes, and view their academic performance. Administrators should have access to dashboards that provide insights into course performance, student engagement, and institutional analytics.
+
+Due to increasing demand for remote and hybrid learning, the system must support high availability, scalability, and security, ensuring that thousands of concurrent users can access the platform without performance degradation. Additionally, the system must integrate with third- party services such as email notification systems and authentication providers.
+The university has emphasized that the system must be well-structured, maintainable, and extensible, as new features (e.g., AI-based recommendations, plagiarism detection, and mobile integration) will be added in future releases. Given the critical nature of academic data, the system must also be thoroughly tested, verified, and validated to ensure correctness, reliability, and security.
+As the lead software engineer, you are required to design, develop, and present a high-quality, fully tested, and well-documented software solution, demonstrating best practices in software construction, verification, and testing.
+
+Project-based assessment guidelines
+
+
+S/N
+Milestone Description
+Maximum Marks
+1
+Select and justify an appropriate software development approach (e.g., Agile, DevOps, Hybrid). Clearly explain how your approach supports iterative development, quality assurance, and risk management.
+5 %
+2
+Design and present the system architecture (e.g., layered, microservices, MVC). Apply appropriate design principles (modularity, abstraction, low coupling, high cohesion) and include diagrams.
+10 %
+3
+Explain how you will ensure high-quality code through naming conventions, coding standards, documentation, and structured programming practices.
+5 %
+4
+Describe how version control systems (e.g., Git) and collaboration workflows (branching strategies, pull requests) will be used to manage development.
+10 %
+5
+Explain how you will ensure correctness using techniques such as static analysis, code reviews, and debugging strategies.
+10 %
+6
+Design and demonstrate unit tests for key modules. Clearly explain your test case design techniques and how test-driven development (TDD) can be applied.
+10 %
+7
+Develop a comprehensive plan for testing interactions between modules and validating the full system functionality under realistic scenarios.
+5 %
+8
+Explain how you will ensure that new updates do not break existing functionality. Include strategies for test selection and prioritization.
+5%
+9
+Identify and justify tools and frameworks for automating testing. Demonstrate how automation improves efficiency and reliability.
+10%
+10
+Design a CI/CD pipeline that supports automated testing, integration, and deployment. Clearly describe workflow stages.
+10%
+11
+Describe how you will evaluate system performance under different loads. Define key metrics (e.g., response time, throughput, scalability).
+10%
+12
+Describe how peer reviews, walkthroughs, and inspections will be conducted to improve software quality.
+5%
+13
+Identify potential challenges (technical, integration, testing, team coordination) and propose practical mitigation strategies.
+5%
+
+TOTAL MARKS
+100 %
+Expected Deliverable:
+i. A comprehensive professional report
+ii. Clear diagrams (architecture, testing workflow, CI/CD pipeline)
+iii. Sample code snippets and test cases
+iv. Evidence of testing and verification
+v. Proper referencing (IEEE style)
+vi. A comprehensive PowerPoint presentation you will use to defend your work
+
+
+
+
