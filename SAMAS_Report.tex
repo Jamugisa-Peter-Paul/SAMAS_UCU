@@ -22,6 +22,8 @@
 \usepackage{amsmath}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{amssymb}
 
 % ─── Typography ───────────────────────────────────────────────────────────────
@@ -694,6 +696,54 @@ stress & 200 &  12m & 94.8 &  62 ms & 288 ms & 484 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Figure~\ref{fig:k6chart} visualises how both the median (p50) and 95th-percentile (p95) response times scale across the three load scenarios, with the 500\,ms SLA threshold shown as a dashed reference line.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  ybar,
+  bar width        = 0.35cm,
+  width            = 12cm,
+  height           = 7cm,
+  enlarge x limits = 0.3,
+  ylabel           = {Response time (ms)},
+  xlabel           = {Load scenario},
+  symbolic x coords= {Smoke (1 VU), Load (50 VUs), Stress (200 VUs)},
+  xtick            = data,
+  x tick label style = {font=\small},
+  ymin=0, ymax=550,
+  ytick            = {0,100,200,300,400,500},
+  legend style     = {at={(0.97,0.97)}, anchor=north east, font=\small},
+  nodes near coords,
+  nodes near coords align = {vertical},
+  every node near coord/.append style = {font=\tiny},
+  grid             = major,
+  grid style       = {dashed, gray!30},
+  title            = {k6 Response Time by Scenario},
+  title style      = {font=\small\bfseries},
+]
+  % p(50) bars
+  \addplot[fill=ucublue!70, draw=ucublue]
+    coordinates {(Smoke (1 VU),38) (Load (50 VUs),56) (Stress (200 VUs),62)};
+  \addlegendentry{p(50) median}
+
+  % p(95) bars
+  \addplot[fill=orange!80, draw=orange!80!black]
+    coordinates {(Smoke (1 VU),62) (Load (50 VUs),189) (Stress (200 VUs),288)};
+  \addlegendentry{p(95)}
+
+  % 500 ms SLA threshold line
+  \draw[red!70!black, very thick, dashed]
+    ({rel axis cs:0,0} -| {axis cs:Smoke (1 VU),500}) --
+    ({rel axis cs:1,0} -| {axis cs:Stress (200 VUs),500})
+    node[right, font=\tiny\bfseries, red!70!black] {SLA 500ms};
+\end{axis}
+\end{tikzpicture}
+\caption{k6 response times (p50 and p95) across smoke, load, and stress scenarios. All p(95) values remain well below the 500\,ms SLA threshold.}
+\label{fig:k6chart}
+\end{figure}
 
 \textbf{Architectural decisions that underpin these results:}
 \begin{itemize}[noitemsep]
