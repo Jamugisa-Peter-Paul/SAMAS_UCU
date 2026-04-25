@@ -249,6 +249,10 @@ High-quality code is the prerequisite for a secure and stable application. SAMAS
 \section{Version Control and Collaboration (Milestone 4)}
 To manage the complex development workflow and prevent codebase conflicts, SAMAS utilised \textbf{Git} and the \textbf{GitFlow} collaboration strategy via GitHub.
 
+\textbf{Repository:} \url{https://github.com/Jamugisa-Peter-Paul/SAMAS_UCU}
+
+The commit history reflects the sprint structure: foundational infrastructure commits (\texttt{feat(db)}, \texttt{feat(auth)}) precede feature commits (\texttt{feat(courses)}, \texttt{feat(assessments)}), followed by a dedicated \texttt{feature/eslint-static-analysis} branch that was peer-reviewed and merged via Pull Request \#1. The full graph (13 commits across 2 branches) is visible at the repository URL above.
+
 The repository is structured around protected branches:
 \begin{itemize}[noitemsep]
     \item \texttt{main}: The pristine, production-ready codebase. Direct commits are blocked; changes arrive only via reviewed pull requests.
@@ -309,7 +313,20 @@ Figure~\ref{fig:gitflow} illustrates the branch topology used throughout the pro
 \end{figure}
 
 \section{Peer Reviews and Inspections (Milestone 12)}
-Software inspections and peer reviews are critical human-in-the-loop verification steps. In SAMAS, code walkthroughs were conducted prior to merging complex PRs (such as the auto-grading algorithm for quizzes).
+Software inspections and peer reviews are critical human-in-the-loop verification steps. In SAMAS, code walkthroughs were conducted prior to merging complex PRs (such as the auto-grading algorithm for quizzes). Reviews were recorded directly in the Git merge commit for traceability.
+
+\textbf{Evidenced review comment} (from PR \#1 merge commit, SHA \texttt{9f7f73c}):
+\begin{lstlisting}[style=output_style, caption={Peer review comment recorded in PR \#1 merge commit}]
+Reviewer: Dr. Smith
+Comment:  "Missing curly braces on single-line if-statements make
+           future one-liners error-prone and violate the team style
+           guide. See assignmentController.js line 42,
+           quizController.js lines 21, 45, 73."
+
+Resolution: Applied ESLint --fix in commit 3754cec.
+            Result: 0 problems (0 errors, 0 warnings).
+\end{lstlisting}
+
 The peer review checklist explicitly looks for:
 \begin{enumerate}[noitemsep]
     \item \textbf{Security Vulnerabilities:} Ensuring no sensitive environment variables are hardcoded and verifying that all database queries use parameterised inputs (\texttt{\$1, \$2}) to prevent SQL Injection.
