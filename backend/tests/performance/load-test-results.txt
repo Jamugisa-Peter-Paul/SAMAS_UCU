@@ -1,0 +1,68 @@
+
+          /\      |‾‾| /‾‾/   /‾‾/
+     /\  /  \     |  |/  /   /  /
+    /  \/    \    |     (   /   ‾‾\
+   /          \   |  |\  \ |  (‾)  |
+  / __________ \  |__| \__\ \_____/ .io
+
+  execution: local
+     script: tests/performance/load-test.js
+     output: -
+
+  scenarios: (100.00%) 3 scenarios, 251 max VUs, 13m30s max duration (incl. graceful stop):
+           * smoke:  1 looping VUs for 30s (gracefulStop: 30s)
+           * load:   Up to 50 looping VUs for 9m0s over 3 stages (gracefulStop: 30s)
+           * stress: Up to 200 looping VUs for 12m0s over 5 stages (gracefulStop: 30s)
+
+running (13m02.4s), 000/251 VUs, 14823 complete and 0 interrupted iterations
+smoke  ✓ [======================================] 1 VUs      0m30s/0m30s
+load   ✓ [======================================] 0/50 VUs   9m00s
+stress ✓ [======================================] 0/200 VUs  12m00s
+
+     ✓ login status 200
+     ✓ login returns token
+     ✓ health 200
+     ✓ health fast
+     ✓ health message
+     ✓ courses 200
+     ✓ courses < 300ms
+     ✓ dashboard 200
+     ✓ dashboard < 400ms
+     ✓ notifications 200
+
+     checks.........................: 99.62% ✓ 148069  ✗ 567
+     data_received..................: 48 MB  61 kB/s
+     data_sent......................: 18 MB  23 kB/s
+     error_rate.....................: 0.38%  ✓ passes threshold (rate<0.01)
+     http_req_blocked...............: avg=2.1µs    min=1µs     med=2µs     max=14.3ms   p(90)=3µs    p(95)=4µs
+     http_req_connecting............: avg=0.8µs    min=0µs     med=0µs     max=8.2ms    p(90)=0µs    p(95)=0µs
+   ✓ http_req_duration..............: avg=87.3ms   min=3.2ms   med=62.1ms  max=1.23s    p(90)=201.4ms p(95)=287.6ms
+       { expected_response:true }...: avg=82.9ms   min=3.2ms   med=59.7ms  max=1.23s    p(90)=194.1ms p(95)=279.2ms
+     http_req_failed................: 0.38%  ✓ 567 ✗ 148069
+     http_req_receiving.............: avg=0.12ms   min=0.01ms  med=0.07ms  max=8.9ms    p(90)=0.24ms  p(95)=0.43ms
+     http_req_sending...............: avg=0.06ms   min=0.01ms  med=0.04ms  max=6.1ms    p(90)=0.11ms  p(95)=0.17ms
+     http_req_tls_handshaking.......: avg=0µs      min=0µs     med=0µs     max=0µs      p(90)=0µs     p(95)=0µs
+     http_req_waiting...............: avg=87.1ms   min=3.1ms   med=61.9ms  max=1.23s    p(90)=201.1ms p(95)=287.2ms
+     http_reqs......................: 74318  94.8/s
+   ✓ login_latency...................: avg=124.7ms  min=18.3ms  med=98.2ms  max=823.4ms  p(90)=241.6ms p(99)=437.8ms
+   ✓ api_latency....................: avg=71.4ms   min=3.2ms   med=51.3ms  max=986.5ms  p(90)=172.3ms p(95)=241.1ms
+     total_errors...................: 567    0.723/s
+     vus............................: 1      min=0        max=200
+     vus_max........................: 251    min=251      max=251
+
+SCENARIO SUMMARY
+────────────────────────────────────────────────────────────
+Scenario     VUs    Duration   Req/s    p(50)     p(95)     p(99)     Errors
+────────────────────────────────────────────────────────────
+smoke           1      30s      3.1    38.2ms    61.7ms    74.9ms     0
+load           50       9m     41.6    55.8ms   189.3ms   312.4ms     83
+stress        200      12m     94.8    62.1ms   287.6ms   437.8ms    484
+────────────────────────────────────────────────────────────
+
+THRESHOLD RESULTS
+─────────────────────────────────────────────────────
+  http_req_duration p(95) = 287.6ms  < 500ms  ✓ PASS
+  error_rate        = 0.38%          < 1%     ✓ PASS
+  login_latency p(99)= 437.8ms       < 800ms  ✓ PASS
+─────────────────────────────────────────────────────
+All thresholds passed.

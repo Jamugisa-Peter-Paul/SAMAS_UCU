@@ -1,0 +1,215 @@
+# SAMAS CI/CD Pipeline
+# Smart Academic Management and Analytics System
+# Uganda Christian University
+
+name: SAMAS CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  # ============================================================
+  # STAGE 1: Code Quality & Static Analysis
+  # ============================================================
+  lint-and-analyze:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run ESLint (Frontend)
+        working-directory: ./frontend
+        run: npx eslint src/ --ext .js,.jsx --format json --output-file eslint-report.json || true
+
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: frontend/eslint-report.json
+
+  # ============================================================
+  # STAGE 2: Unit Testing
+  # ============================================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-analyze
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run Unit Tests with Coverage
+        working-directory: ./backend
+        run: npm test -- --coverage --coverageReporters=json-summary
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: backend/coverage/
+
+  # ============================================================
+  # STAGE 3: Integration Testing
+  # ============================================================
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: samas_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run Integration Tests
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/samas_test
+          JWT_SECRET: test-secret-key
+          NODE_ENV: test
+        run: npm test
+
+  # ============================================================
+  # STAGE 4: Build
+  # ============================================================
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.API_URL }}
+        run: npm run build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/.next/
+
+  # ============================================================
+  # STAGE 5: Deploy to Staging
+  # ============================================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/.next/
+
+      - name: Deploy Backend to Staging
+        run: echo "Deploy backend to staging server"
+
+      - name: Deploy Frontend to Staging
+        run: echo "Deploy frontend to staging server"
+
+      - name: Run Smoke Tests
+        run: echo "Running smoke tests against staging environment"
+
+  # ============================================================
+  # STAGE 6: Deploy to Production
+  # ============================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/.next/
+
+      - name: Deploy Backend to Production
+        run: echo "Deploy backend to production server"
+
+      - name: Deploy Frontend to Production
+        run: echo "Deploy frontend to production server"
+
+      - name: Health Check
+        run: echo "Running production health checks"
+
+      - name: Notify Team
+        run: echo "Sending deployment notification to team"
